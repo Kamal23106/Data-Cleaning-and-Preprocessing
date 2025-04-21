@@ -1,0 +1,22 @@
+import pandas as pd
+import numpy as np
+Dataset = pd.read_csv(r"C:\Dataset\patient_analyis.csv", low_memory=False)
+print(Dataset.shape)
+print(Dataset.info())
+print(Dataset.head())
+print(Dataset.isnull().sum())
+Dataset['DOB'] = pd.to_datetime(Dataset['DOB'], errors='coerce', dayfirst=True)
+median_dob = Dataset['DOB'].median()
+Dataset['DOB'] = Dataset['DOB'].fillna(median_dob)
+duplicate_rows = Dataset[Dataset.duplicated()]
+print(f"Total duplicate rows: {duplicate_rows.shape[0]}")
+Dataset= Dataset.drop_duplicates()
+Dataset['Gender'] = Dataset['Gender'].str.strip().str.lower()
+Dataset['ScheduledDay'] = pd.to_datetime(Dataset['ScheduledDay'], errors='coerce')
+Dataset['AppointmentDay'] = pd.to_datetime(Dataset['AppointmentDay'], errors='coerce')
+Dataset['DOB'] = pd.to_datetime(Dataset['DOB'], errors='coerce', dayfirst=True)
+Dataset.columns = Dataset.columns.str.strip().str.lower().str.replace('-', '_').str.replace(' ', '_')
+Dataset['age'] = Dataset['age'].astype(int)
+null_summary = Dataset.isnull().sum()
+data_types = Dataset.dtypes
+Dataset.head(), null_summary, data_types
